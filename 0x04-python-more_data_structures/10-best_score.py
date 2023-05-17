@@ -10,7 +10,7 @@ def best_score(a_dictionary):
     big = None
     if type(a_dictionary) is dict:
         for key, value in a_dictionary.items():
-            if value > max_val:
-                max_val = value
+            if value > val:
+                val = value
                 big = key
     return big
