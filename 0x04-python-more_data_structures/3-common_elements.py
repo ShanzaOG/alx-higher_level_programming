@@ -6,5 +6,4 @@ def common_elements(set_1, set_2):
     Function to check common elements
     of two sets.
     """
-   
     return (set_1 & set_2)
