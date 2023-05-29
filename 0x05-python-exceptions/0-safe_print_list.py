@@ -1,24 +1,21 @@
 #!/usr/bin/python3
 
 
+
+#!/usr/bin/python3
+
+
 def safe_print_list(my_list=[], x=0):
     """
-    Function that prints elements of a list
+    prints a list of anything, but only prints the integers
+    Returns the amount of integers printed
     """
-    count = 0
-
-    try:
-        for element in my_list:
-            print(element, end='')
-            count += 1
-
-            if count == x:
-                break
-
-    except TypeError:
-        print("Error: Unable to print element.")
-
-    finally:
-        print()
-
-    return count
+    printed = 0
+    for i in range(x):
+        try:
+            print("{:d}".format(my_list[i]), end="")
+            printed += 1
+        except:
+            continue
+    print()
+    return printed
