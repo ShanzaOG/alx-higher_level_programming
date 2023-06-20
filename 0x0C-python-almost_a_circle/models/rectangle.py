@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 """Define class rectangle"""
+
+
 from models.base import Base
 
 
