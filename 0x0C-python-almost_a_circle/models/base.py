@@ -4,6 +4,7 @@
 class Base
 """
 
+
 class Base:
     """
     class Base
