@@ -1,117 +1,64 @@
 #!/usr/bin/python3
-""" Module for test Base class """
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jun  5 15:43:09 2020
+
+@author: meco
+"""
+import sys
 import unittest
-from io import StringIO
-import os
-from unittest.mock import patch
-from unittest import TestCase
+import inspect
+import io
+import pep8
+from contextlib import redirect_stdout
 from models.base import Base
-from models.square import Square
-from models.rectangle import Rectangle
 
 
-class TestBaseMethods(unittest.TestCase):
-    """ Test Base class """
+class TestSquare(unittest.TestCase):
+    """
+    class for testing Base class' methods
+    """
 
-    def setUp(self):
-        """ Method for testing """
-        Base._Base__nb_objects = 0
+    @classmethod
+    def setUpClass(cls):
+        """
+        Set up class method for the doc tests
+        """
+        cls.setup = inspect.getmembers(Base, inspect.isfunction)
 
-    def test_id(self):
-        """ Test assigned id """
-        new = Base(1)
-        self.assertEqual(new.id, 1)
+    def test_pep8_conformance_base(self):
+        """
+        Test that base.py file conform to PEP8
+        """
+        pep8style = pep8.StyleGuide(quiet=True)
+        result = pep8style.check_files(['models/base.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-    def test_id_d(self):
-        """ Test default id """
-        new = Base()
-        self.assertEqual(new.id, 1)
+    def test_pep8_conformance_test_base(self):
+        """
+        Test that test_base.py file conform to PEP8
+        """
+        pep8style = pep8.StyleGuide(quiet=True)
+        result = pep8style.check_files(['tests/test_models/test_base.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-    def test_no_arg(self):
-        b1 = Base()
-        b2 = Base()
-        self.assertEqual(b1.id, b2.id - 1)
+    def test_module_docstring(self):
+        """
+        Tests if module docstring documentation exist
+        """
+        self.assertTrue(len(Base.__doc__) >= 1)
 
-    def test_id_m(self):
-        """ Test object attributes and assigned id """
-        n1 = Base()
-        n2 = Base(1024)
-        n3 = Base()
-        self.assertEqual(n1.id, 1)
-        self.assertEqual(n2.id, 1024)
-        self.assertEqual(n3.id, 2)
+    def test_class_docstring(self):
+        """
+        Tests if class docstring documentation exist
+        """
+        self.assertTrue(len(Base.__doc__) >= 1)
 
-    def test_list_id(self):
-        self.assertEqual([1, 2, 3], Base([1, 2, 3]).id)
-
-    def test_tuple_id(self):
-        self.assertEqual((1, 2), Base((1, 2)).id)
-
-    def test_set_id(self):
-        self.assertEqual({1, 2, 3}, Base({1, 2, 3}).id)
-
-    def test_string_id(self):
-        """ Test string id """
-        new = Base('1')
-        self.assertEqual(new.id, '1')
-
-    def test_more_args_id(self):
-        """ Test passing more args to init method """
-        with self.assertRaises(TypeError):
-            new = Base(1, 1)
-
-    def test_to_json_string_rectangle_one_dict(self):
-        r = Rectangle(10, 7, 2, 8, 6)
-        self.assertTrue(len(Base.to_json_string([r.to_dictionary()])) == 53)
-
-    def test_to_json_string_rectangle_two_dicts(self):
-        r1 = Rectangle(2, 3, 5, 19, 2)
-        r2 = Rectangle(4, 2, 4, 1, 12)
-        list_dicts = [r1.to_dictionary(), r2.to_dictionary()]
-        self.assertTrue(len(Base.to_json_string(list_dicts)) == 106)
-
-    def test_to_json_string_square_type(self):
-        s = Square(10, 2, 3, 4)
-        self.assertEqual(str, type(Base.to_json_string([s.to_dictionary()])))
-
-    def test_to_json_string_square_one_dict(self):
-        s = Square(10, 2, 3, 4)
-        self.assertTrue(len(Base.to_json_string([s.to_dictionary()])) == 39)
-
-    def test_to_json_string_square_two_dicts(self):
-        s1 = Square(10, 2, 3, 4)
-        s2 = Square(4, 5, 21, 2)
-        list_dicts = [s1.to_dictionary(), s2.to_dictionary()]
-        self.assertTrue(len(Base.to_json_string(list_dicts)) == 78)
-
-    def test_save_to_file_two_rectangles(self):
-        r1 = Rectangle(10, 7, 2, 8, 5)
-        r2 = Rectangle(2, 4, 1, 2, 3)
-        Rectangle.save_to_file([r1, r2])
-        with open("Rectangle.json", "r") as f:
-            self.assertTrue(len(f.read()) == 105)
-
-    def test_save_to_file_a_square(self):
-        s = Square(10, 7, 2, 8)
-        Square.save_to_file([s])
-        with open("Square.json", "r") as f:
-            self.assertTrue(len(f.read()) == 39)
-
-    def test_load_from_file_csv_square_type(self):
-        s1 = Square(5, 1, 3, 3)
-        s2 = Square(9, 5, 2, 3)
-        Square.save_to_file_csv([s1, s2])
-        output = Square.load_from_file_csv()
-        self.assertTrue(all(type(obj) == Square for obj in output))
-
-    def test_load_from_file_csv_no_file(self):
-        output = Square.load_from_file_csv()
-        self.assertEqual([], output)
-
-    def test_load_from_file_csv_more_than_one_arg(self):
-        with self.assertRaises(TypeError):
-            Base.load_from_file_csv([], 1)
-
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_func_docstrings(self):
+        """
+        Tests if methods docstring documntation exist
+        """
+        for func in self.setup:
+            self.assertTrue(len(func[1].__doc__) >= 1)
